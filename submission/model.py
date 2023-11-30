@@ -18,7 +18,8 @@ class Model(torch.nn.Module):
         self.pool = nn.MaxPool2d(kernel_size=2)
         self.flatten = nn.Flatten()
 
-        self.linear1 = nn.Linear(6924, 48)
+        self.linear1 = nn.Linear(6924, 1024)
+        self.linear2 = nn.Linear(1024, 48)
 
     def forward(self, pv, hrv):
         x = torch.relu(self.pool(self.conv1(hrv)))
@@ -28,7 +29,7 @@ class Model(torch.nn.Module):
 
         x = self.flatten(x)
         x = torch.concat((x, pv), dim=-1)
-
-        x = torch.sigmoid(self.linear1(x))
+        x = self.linear1(x)
+        x = torch.sigmoid(self.linear2(x))
 
         return x
